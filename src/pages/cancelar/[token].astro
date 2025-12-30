@@ -1,0 +1,200 @@
+---
+// Página de cancelación de reservas
+// URL: /cancelar/[token]
+import Layout from '../../layouts/Layout.astro';
+
+// Necesario para SSR con parámetros dinámicos
+export const prerender = false;
+
+const { token } = Astro.params;
+
+// Validar que existe el token
+if (!token) {
+  return Astro.redirect('/');
+}
+---
+
+<Layout title="Cancelar Reserva">
+  <div class="container mx-auto px-4 py-16">
+    <div class="max-w-md mx-auto">
+      <div id="loading" class="text-center py-12">
+        <div class="loading loading-spinner loading-lg"></div>
+        <p class="mt-4 text-gray-400">Verificando reserva...</p>
+      </div>
+
+      <div id="confirmar-cancelacion" class="hidden">
+        <div class="card">
+          <div class="card-body text-center">
+            <div class="text-6xl mb-4">⚠️</div>
+            <h2 class="text-2xl font-display font-bold mb-4">
+              Cancelar Reserva
+            </h2>
+            
+            <div id="detalles-reserva" class="text-left bg-base-200/30 p-4 rounded-lg mb-6">
+              <!-- Se llena dinámicamente -->
+            </div>
+
+            <p class="text-gray-400 mb-6">
+              ¿Estás seguro que deseas cancelar esta reserva?<br/>
+              <span class="text-sm">Esta acción no se puede deshacer.</span>
+            </p>
+
+            <div class="flex gap-4">
+              <button id="btn-cancelar" class="btn btn-primary flex-1">
+                Sí, cancelar
+              </button>
+              <a href="/" class="btn btn-outline flex-1">
+                No, volver
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="resultado" class="hidden">
+        <div class="card">
+          <div class="card-body text-center">
+            <div id="resultado-icono" class="text-6xl mb-4"></div>
+            <h2 id="resultado-titulo" class="text-2xl font-display font-bold mb-4"></h2>
+            <p id="resultado-mensaje" class="text-gray-400 mb-6"></p>
+            <a href="/" class="btn btn-primary">
+              Volver al inicio
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div id="error" class="hidden">
+        <div class="card border-red-500/30">
+          <div class="card-body text-center">
+            <div class="text-6xl mb-4">❌</div>
+            <h2 class="text-2xl font-display font-bold mb-4 text-red-400">
+              Reserva no encontrada
+            </h2>
+            <p class="text-gray-400 mb-6">
+              El link de cancelación no es válido o la reserva ya fue procesada.
+            </p>
+            <a href="/" class="btn btn-outline">
+              Volver al inicio
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<script define:vars={{ token }}>
+  let reserva = null;
+
+  // Cargar datos al iniciar
+  document.addEventListener('DOMContentLoaded', async () => {
+    await verificarReserva();
+    setupListeners();
+  });
+
+  async function verificarReserva() {
+    try {
+      const response = await fetch(`/api/cancelar/verificar?token=${token}`);
+      const data = await response.json();
+
+      const loading = document.getElementById('loading');
+      const confirmar = document.getElementById('confirmar-cancelacion');
+      const error = document.getElementById('error');
+
+      if (loading) loading.classList.add('hidden');
+
+      if (data.success && data.reserva) {
+        reserva = data.reserva;
+        mostrarDetalles(data.reserva);
+        if (confirmar) confirmar.classList.remove('hidden');
+      } else {
+        if (error) error.classList.remove('hidden');
+      }
+    } catch (err) {
+      document.getElementById('loading')?.classList.add('hidden');
+      document.getElementById('error')?.classList.remove('hidden');
+    }
+  }
+
+  function mostrarDetalles(reserva) {
+    const detalles = document.getElementById('detalles-reserva');
+    if (!detalles) return;
+
+    detalles.innerHTML = `
+      <div class="space-y-2">
+        <div class="flex justify-between">
+          <span class="text-gray-400">Fecha:</span>
+          <span class="font-semibold">${formatearFecha(reserva.fecha)}</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-gray-400">Hora:</span>
+          <span class="font-semibold">${reserva.hora}</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-gray-400">Servicio:</span>
+          <span class="font-semibold">${reserva.servicio}</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-gray-400">Cliente:</span>
+          <span class="font-semibold">${reserva.cliente.nombre}</span>
+        </div>
+      </div>
+    `;
+  }
+
+  function setupListeners() {
+    const btnCancelar = document.getElementById('btn-cancelar');
+    if (btnCancelar) {
+      btnCancelar.addEventListener('click', procesarCancelacion);
+    }
+  }
+
+  async function procesarCancelacion() {
+    const btn = document.getElementById('btn-cancelar');
+    if (!btn) return;
+
+    const originalText = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<span class="loading loading-spinner"></span> Cancelando...';
+
+    try {
+      const response = await fetch('/api/cancelar/procesar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token })
+      });
+
+      const data = await response.json();
+
+      document.getElementById('confirmar-cancelacion')?.classList.add('hidden');
+      const resultado = document.getElementById('resultado');
+      
+      if (data.success) {
+        document.getElementById('resultado-icono').textContent = '✅';
+        document.getElementById('resultado-titulo').textContent = 'Reserva Cancelada';
+        document.getElementById('resultado-mensaje').textContent = 'Tu reserva ha sido cancelada exitosamente. Te esperamos en otra ocasión.';
+      } else {
+        document.getElementById('resultado-icono').textContent = '❌';
+        document.getElementById('resultado-titulo').textContent = 'Error';
+        document.getElementById('resultado-mensaje').textContent = data.error || 'No se pudo cancelar la reserva.';
+      }
+
+      if (resultado) resultado.classList.remove('hidden');
+
+    } catch (error) {
+      btn.disabled = false;
+      btn.innerHTML = originalText;
+      alert('Error al cancelar la reserva. Por favor intenta de nuevo.');
+    }
+  }
+
+  function formatearFecha(fecha) {
+    const [year, month, day] = fecha.split('-');
+    const meses = [
+      'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+      'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+    ];
+    return `${day} de ${meses[parseInt(month) - 1]} de ${year}`;
+  }
+</script>

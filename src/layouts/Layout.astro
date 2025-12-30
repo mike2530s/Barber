@@ -1,0 +1,92 @@
+---
+// FASE 4: Layout Base de la aplicación
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const { 
+  title = 'Barbería El Estilo - Reserva tu cita', 
+  description = 'Agenda tu cita en la mejor barbería. Cortes modernos, servicio profesional.' 
+} = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet" />
+    
+    <title>{title}</title>
+  </head>
+  <body class="min-h-screen">
+    <!-- Header -->
+    <header class="navbar sticky top-0 z-50">
+      <div class="container mx-auto px-4 flex justify-between items-center">
+        <a href="/" class="btn btn-ghost text-xl font-display flex items-center gap-2">
+          <span class="text-primary text-2xl">✂️</span>
+          <span class="hidden sm:inline">Barbería El Estilo</span>
+          <span class="sm:hidden">El Estilo</span>
+        </a>
+        <div class="flex gap-2">
+          <a href="/admin" class="btn btn-outline btn-sm hidden md:inline-flex">
+            👤 Admin
+          </a>
+          <a href="/booking" class="btn btn-primary btn-sm">
+            Reservar
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+      <slot />
+    </main>
+
+    <!-- Footer -->
+    <footer class="mt-16 py-10 md:py-16 bg-gradient-to-t from-barber-darker to-transparent border-t border-primary/20">
+      <div class="container mx-auto px-4">
+        <div class="max-w-4xl mx-auto text-center">
+          <div class="mb-6">
+            <p class="text-2xl md:text-3xl font-display font-bold text-gradient mb-2">
+              Barbería El Estilo
+            </p>
+            <p class="text-gray-400">Estilo, clase y tradición desde 2020</p>
+          </div>
+          
+          <div class="mb-6 text-sm md:text-base text-gray-400 space-y-2">
+            <p class="flex items-center justify-center gap-2">
+              <svg class="w-4 h-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+              </svg>
+              <span>{import.meta.env.PUBLIC_BARBER_ADDRESS || 'Calle Principal #123, Ciudad'}</span>
+            </p>
+            <p class="flex items-center justify-center gap-2">
+              <svg class="w-4 h-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+              </svg>
+              <span>{import.meta.env.PUBLIC_BARBER_PHONE || '+52 123 456 7890'}</span>
+            </p>
+          </div>
+
+          <div class="pt-6 border-t border-primary/10">
+            <p class="text-xs text-gray-500">
+              © {new Date().getFullYear()} Barbería El Estilo - Todos los derechos reservados
+            </p>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

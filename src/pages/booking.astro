@@ -1,0 +1,33 @@
+---
+// Componente principal para agendar citas con calendario y formulario
+// Usa Preact para interactividad (más ligero que React)
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Reserva tu Cita - Barbería El Estilo">
+  <div class="max-w-4xl mx-auto">
+    <!-- Hero Section -->
+    <div class="text-center mb-12 animate-fade-in">
+      <h1 class="text-5xl font-display font-bold mb-4 text-gradient">
+        Reserva tu Cita
+      </h1>
+      <p class="text-lg opacity-80">
+        Elige tu horario preferido y asegura tu lugar
+      </p>
+    </div>
+
+    <!-- Componente de Reserva -->
+    <div id="booking-app" class="card-glass card lg:p-8 p-4">
+      <!-- El componente React/Preact se cargará aquí -->
+    </div>
+  </div>
+</Layout>
+
+<script>
+  import { createApp } from '../components/BookingApp';
+  
+  const container = document.getElementById('booking-app');
+  if (container) {
+    createApp(container);
+  }
+</script>

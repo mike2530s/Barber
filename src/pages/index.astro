@@ -1,0 +1,248 @@
+---
+// Página de inicio (landing page)
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout>
+  <!-- Hero Section con efectos visuales -->
+  <section class="relative min-h-screen flex items-center justify-center overflow-hidden">
+    <!-- Fondo animado -->
+    <div class="absolute inset-0 -z-10">
+      <div class="absolute top-20 left-10 w-64 h-64 md:w-96 md:h-96 bg-primary opacity-20 rounded-full blur-3xl animate-pulse"></div>
+      <div class="absolute bottom-20 right-10 w-80 h-80 md:w-[500px] md:h-[500px] bg-primary-light opacity-20 rounded-full blur-3xl animate-pulse" style="animation-delay: 1s;"></div>
+    </div>
+
+    <div class="container mx-auto px-4 text-center fade-in">
+      <div class="max-w-4xl mx-auto">
+        <!-- Badge decorativo -->
+        <div class="inline-block mb-6">
+          <span class="badge badge-lg badge-primary">✂️ Desde 2020</span>
+        </div>
+
+        <h1 class="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-display font-bold mb-6 leading-tight">
+          <span class="text-gradient">Estilo</span> &
+          <span class="text-gradient">Tradición</span>
+        </h1>
+
+        <p class="text-xl md:text-2xl lg:text-3xl mb-8 text-gray-300 max-w-2xl mx-auto">
+          La mejor experiencia en cortes clásicos y modernos
+        </p>
+
+        <div class="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
+          <a href="/booking" class="btn btn-primary btn-lg w-full sm:w-auto shadow-gold">
+            ✂️ Reservar Cita Ahora
+          </a>
+          <a href="#servicios" class="btn btn-outline btn-lg w-full sm:w-auto">
+            <span>Ver Servicios</span>
+          </a>
+        </div>
+
+        <!-- Features rápidos -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl mx-auto text-sm md:text-base">
+          <div class="flex items-center justify-center gap-2 text-primary">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+            </svg>
+            <span>Reserva Online</span>
+          </div>
+          <div class="flex items-center justify-center gap-2 text-primary">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <span>Sin Esperas</span>
+          </div>
+          <div class="flex items-center justify-center gap-2 text-primary">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <span>Profesionales</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scroll indicator -->
+    <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+      <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+      </svg>
+    </div>
+  </section>
+
+  <!-- Servicios -->
+  <section id="servicios" class="py-16 md:py-24">
+    <div class="container mx-auto px-4">
+      <div class="text-center mb-12 md:mb-16 fade-in">
+        <h2 class="text-3xl md:text-4xl lg:text-5xl font-display font-bold mb-4">
+          Nuestros <span class="text-gradient">Servicios</span>
+        </h2>
+        <p class="text-lg md:text-xl text-gray-400">Calidad y profesionalismo en cada corte</p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+        <!-- Servicio 1 -->
+        <div class="card hover:scale-105 transform transition-all duration-300 cursor-pointer" data-service="corte-cabello">
+          <div class="card-body items-center text-center">
+            <div class="text-5xl md:text-6xl mb-4">✂️</div>
+            <h3 class="card-title text-xl md:text-2xl">Corte de Cabello</h3>
+            <p class="text-gray-400">Cortes modernos y clásicos adaptados a tu estilo</p>
+            <div class="badge badge-primary mt-4">30 min</div>
+            <p class="text-xs text-primary mt-3 opacity-70">Click para ver ejemplos →</p>
+          </div>
+        </div>
+
+        <!-- Servicio 2 -->
+        <div class="card hover:scale-105 transform transition-all duration-300 cursor-pointer" data-service="barba">
+          <div class="card-body items-center text-center">
+            <div class="text-5xl md:text-6xl mb-4">🧔</div>
+            <h3 class="card-title text-xl md:text-2xl">Arreglo de Barba</h3>
+            <p class="text-gray-400">Perfilado y mantenimiento profesional</p>
+            <div class="badge badge-primary mt-4">20 min</div>
+            <p class="text-xs text-primary mt-3 opacity-70">Click para ver ejemplos →</p>
+          </div>
+        </div>
+
+        <!-- Servicio 3 -->
+        <div class="card hover:scale-105 transform transition-all duration-300 border-2 border-primary cursor-pointer" data-service="combo">
+          <div class="card-body items-center text-center">
+            <div class="badge badge-primary mb-2">Popular</div>
+            <div class="text-5xl md:text-6xl mb-4">⭐</div>
+            <h3 class="card-title text-xl md:text-2xl">Corte + Barba</h3>
+            <p class="text-gray-400">Combo completo para lucir impecable</p>
+            <div class="badge badge-primary mt-4">45 min</div>
+            <p class="text-xs text-primary mt-3 opacity-70">Click para ver ejemplos →</p>
+          </div>
+        </div>
+
+        <!-- Servicio 4 -->
+        <div class="card hover:scale-105 transform transition-all duration-300 cursor-pointer" data-service="afeitado">
+          <div class="card-body items-center text-center">
+            <div class="text-5xl md:text-6xl mb-4">🪒</div>
+            <h3 class="card-title text-xl md:text-2xl">Afeitado Clásico</h3>
+            <p class="text-gray-400">Con navaja tradicional caliente</p>
+            <div class="badge badge-primary mt-4">30 min</div>
+            <p class="text-xs text-primary mt-3 opacity-70">Click para ver ejemplos →</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Por qué elegirnos -->
+  <section class="py-16 md:py-24 bg-gradient-to-b from-transparent to-barber-dark">
+    <div class="container mx-auto px-4">
+      <div class="max-w-4xl mx-auto">
+        <h2 class="text-3xl md:text-4xl font-display font-bold text-center mb-12 md:mb-16">
+          ¿Por qué <span class="text-gradient">elegirnos</span>?
+        </h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div class="text-center">
+            <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-primary/20 flex items-center justify-center">
+              <svg class="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+            </div>
+            <h3 class="text-xl font-bold mb-2">Puntualidad</h3>
+            <p class="text-gray-400">Sin esperas innecesarias, respetamos tu tiempo</p>
+          </div>
+
+          <div class="text-center">
+            <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-primary/20 flex items-center justify-center">
+              <svg class="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+            </div>
+            <h3 class="text-xl font-bold mb-2">Profesionalismo</h3>
+            <p class="text-gray-400">Barberos con años de experiencia</p>
+          </div>
+
+          <div class="text-center">
+            <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-primary/20 flex items-center justify-center">
+              <svg class="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5"></path>
+              </svg>
+            </div>
+            <h3 class="text-xl font-bold mb-2">Satisfacción</h3>
+            <p class="text-gray-400">Tu estilo, nuestra prioridad</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="py-16 md:py-24">
+    <div class="container mx-auto px-4">
+      <div class="card max-w-3xl mx-auto shadow-gold">
+        <div class="card-body text-center p-8 md:p-12">
+          <h2 class="text-3xl md:text-4xl font-display font-bold mb-4">
+            ¿Listo para tu <span class="text-gradient">nuevo look</span>?
+          </h2>
+          <p class="text-lg md:text-xl text-gray-300 mb-8">
+            Agenda tu cita ahora y garantiza tu horario preferido.<br/>
+            <span class="text-primary font-semibold">¡Es gratis y solo toma 2 minutos!</span>
+          </p>
+          <a href="/booking" class="btn btn-primary btn-lg shadow-gold inline-block">
+            ✂️ Reservar Mi Cita
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Horarios -->
+  <section class="py-12 md:py-16">
+    <div class="container mx-auto px-4">
+      <div class="max-w-2xl mx-auto glass-effect rounded-2xl p-8 md:p-12 text-center">
+        <h3 class="text-2xl md:text-3xl font-display font-bold mb-8">
+          <span class="text-gradient">Horarios</span> de Atención
+        </h3>
+        <div class="space-y-4 text-lg">
+          <div class="flex justify-between items-center pb-3 border-b border-primary/20">
+            <span class="text-gray-400">Lunes a Viernes</span>
+            <span class="font-semibold text-primary">9:00 AM - 8:00 PM</span>
+          </div>
+          <div class="flex justify-between items-center pb-3 border-b border-primary/20">
+            <span class="text-gray-400">Sábado</span>
+            <span class="font-semibold text-primary">9:00 AM - 6:00 PM</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-gray-400">Domingo</span>
+            <span class="text-gray-500">Cerrado</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<script>
+  import { initServiceModals } from '../components/ServiceModal';
+  
+  // Inicializar modales cuando el DOM esté listo
+  document.addEventListener('DOMContentLoaded', () => {
+    initServiceModals();
+  });
+</script>
+
+<style>
+  @keyframes pulse {
+    0%, 100% {
+      opacity: 0.2;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.3;
+      transform: scale(1.1);
+    }
+  }
+
+  .animate-pulse {
+    animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+  
+  .cursor-pointer {
+    cursor: pointer;
+  }
+</style>
