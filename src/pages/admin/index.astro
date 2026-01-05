@@ -1,6 +1,15 @@
 ---
 // Panel de administración - Vista de todas las reservas
 import Layout from '../../layouts/Layout.astro';
+import { validateSessionFromCookies } from '../../utils/auth';
+
+// Verificar autenticación
+const cookieHeader = Astro.request.headers.get('cookie');
+const isAuthenticated = await validateSessionFromCookies(cookieHeader);
+
+if (!isAuthenticated) {
+  return Astro.redirect('/admin/login');
+}
 ---
 
 <Layout title="Admin - Reservas">
@@ -11,9 +20,14 @@ import Layout from '../../layouts/Layout.astro';
         <h1 class="text-4xl font-display font-bold text-gradient">Panel de Administración</h1>
         <p class="text-gray-400 mt-2">Gestiona todas las reservas de la barbería</p>
       </div>
-      <a href="/" class="btn btn-outline">
-        ← Volver al inicio
-      </a>
+      <div class="flex gap-3">
+        <button id="logout-btn" class="btn btn-outline">
+          🚪 Cerrar Sesión
+        </button>
+        <a href="/" class="btn btn-outline">
+          ← Volver al inicio
+        </a>
+      </div>
     </div>
 
     <!-- Filtros -->
@@ -109,12 +123,61 @@ import Layout from '../../layouts/Layout.astro';
         </div>
 
         <div id="no-reservas" class="hidden text-center py-12">
-          <div class="text-6xl mb-4">📅</div>
+          <svg class="w-20 h-20 mx-auto mb-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+          </svg>
           <p class="text-xl text-gray-400">No hay reservas para mostrar</p>
         </div>
       </div>
     </div>
   </div>
+
+  <!-- Modal de Cancelación -->
+  <dialog id="cancel-modal" class="modal">
+    <div class="modal-box bg-dark-card border border-primary/20">
+      <h3 class="text-2xl font-bold text-gradient mb-4">Cancelar Reserva</h3>
+      
+      <div class="mb-4">
+        <p class="text-gray-300 mb-2">Reserva seleccionada:</p>
+        <div id="cancel-reserva-info" class="p-3 bg-primary/10 rounded-lg text-sm">
+          <!-- Se llenará dinámicamente -->
+        </div>
+      </div>
+
+      <div class="form-control mb-6">
+        <label class="label">
+          <span class="label-text font-semibold">Motivo de cancelación *</span>
+        </label>
+        <textarea
+          id="cancel-reason"
+          class="textarea w-full h-24"
+          placeholder="Ej: No hay disponibilidad de barbero, Emergencia personal, etc."
+          required
+        ></textarea>
+        <label class="label">
+          <span class="label-text-alt text-gray-400">Este motivo será visible para el cliente</span>
+        </label>
+      </div>
+
+      <div class="flex gap-3 justify-end">
+        <button 
+          class="btn btn-outline" 
+          onclick="document.getElementById('cancel-modal').close()"
+        >
+          Cancelar
+        </button>
+        <button 
+          id="confirm-cancel-btn"
+          class="btn btn-error"
+        >
+          ❌ Confirmar Cancelación
+        </button>
+      </div>
+    </div>
+    <form method="dialog" class="modal-backdrop">
+      <button>close</button>
+    </form>
+  </dialog>
 </Layout>
 
 <script>
@@ -122,6 +185,21 @@ import Layout from '../../layouts/Layout.astro';
   
   document.addEventListener('DOMContentLoaded', () => {
     initAdminPanel();
+    
+    // Manejar logout
+    const logoutBtn = document.getElementById('logout-btn');
+    if (logoutBtn) {
+      logoutBtn.addEventListener('click', async () => {
+        try {
+          await fetch('/api/admin/logout', { method: 'POST' });
+          window.location.href = '/admin/login';
+        } catch (error) {
+          console.error('Error al cerrar sesión:', error);
+          // Redirigir de todos modos
+          window.location.href = '/admin/login';
+        }
+      });
+    }
   });
 </script>
 

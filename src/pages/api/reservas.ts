@@ -19,20 +19,25 @@ export const GET: APIRoute = async ({ url }) => {
             );
         }
 
-        // Consultar reservas del día
+        // Consultar reservas del día (query simplificada para evitar índice compuesto)
         const reservasRef = collection(db, 'reservas');
         const q = query(
             reservasRef,
-            where('fecha', '==', fecha),
-            where('estado', 'in', ['pendiente', 'confirmada']),
-            orderBy('hora', 'asc')
+            where('fecha', '==', fecha)
         );
 
         const querySnapshot = await getDocs(q);
-        const reservas = querySnapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data(),
-        }));
+
+        // Filtrar y ordenar manualmente en lugar de usar Firebase
+        const reservas = querySnapshot.docs
+            .map(doc => ({
+                id: doc.id,
+                ...doc.data(),
+            }))
+            .filter((reserva: any) =>
+                reserva.estado === 'pendiente' || reserva.estado === 'confirmada'
+            )
+            .sort((a: any, b: any) => a.hora.localeCompare(b.hora));
 
         return new Response(
             JSON.stringify({

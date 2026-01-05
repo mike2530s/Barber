@@ -1,24 +1,21 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
-import tailwindcss from '@tailwindcss/vite';
 import vercel from '@astrojs/vercel';
+import tailwind from '@astrojs/tailwind';
 
 // https://astro.build/config
 export default defineConfig({
-  output: 'server', // SSR habilitado para API routes y páginas dinámicas
+  output: 'server',
 
   adapter: vercel({
     webAnalytics: {
-      enabled: false // Cambiar a true si quieres usar Vercel Analytics
+      enabled: false
     }
   }),
 
-  vite: {
-    plugins: [tailwindcss()]
-  },
+  integrations: [tailwind()],
 
   image: {
-    // Optimización de imágenes con Sharp
     service: {
       entrypoint: 'astro/assets/services/sharp'
     }

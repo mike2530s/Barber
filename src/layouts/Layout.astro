@@ -14,7 +14,7 @@ const {
 ---
 
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-theme="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -28,18 +28,23 @@ const {
     
     <title>{title}</title>
   </head>
-  <body class="min-h-screen">
+  <body class="min-h-screen dark">
     <!-- Header -->
     <header class="navbar sticky top-0 z-50">
       <div class="container mx-auto px-4 flex justify-between items-center">
         <a href="/" class="btn btn-ghost text-xl font-display flex items-center gap-2">
-          <span class="text-primary text-2xl">✂️</span>
+          <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.121 14.121L19 19m-7-7l7-7m-7 7l-2.879 2.879M12 12L9.121 9.121m0 0L4 4m5.121 5.121L4 14"/>
+          </svg>
           <span class="hidden sm:inline">Barbería El Estilo</span>
           <span class="sm:hidden">El Estilo</span>
         </a>
         <div class="flex gap-2">
-          <a href="/admin" class="btn btn-outline btn-sm hidden md:inline-flex">
-            👤 Admin
+          <a href="/admin" class="btn btn-outline btn-sm hidden md:inline-flex items-center gap-1">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+            </svg>
+            Admin
           </a>
           <a href="/booking" class="btn btn-primary btn-sm">
             Reservar

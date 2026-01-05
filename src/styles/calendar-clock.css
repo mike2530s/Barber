@@ -1,0 +1,234 @@
+/* Estilos para Calendario y Reloj Interactivo */
+
+/* ==================== CALENDARIO ==================== */
+.calendar-container {
+    padding: 1.5rem;
+    background: rgba(30, 30, 30, 0.5);
+    border-radius: 1rem;
+    border: 1px solid rgba(212, 175, 55, 0.2);
+}
+
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.calendar-nav-btn {
+    background: transparent;
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    color: var(--barber-gold);
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 1.2rem;
+}
+
+.calendar-nav-btn:hover:not(:disabled) {
+    background: rgba(212, 175, 55, 0.1);
+    border-color: var(--barber-gold);
+    transform: scale(1.05);
+}
+
+.calendar-nav-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.calendar-month-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--barber-gold);
+    text-align: center;
+}
+
+.calendar-weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.calendar-weekday {
+    text-align: center;
+    font-weight: 600;
+    color: rgba(212, 175, 55, 0.7);
+    font-size: 0.875rem;
+    padding: 0.5rem;
+}
+
+.calendar-days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0.5rem;
+}
+
+.calendar-day {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+    font-weight: 500;
+    position: relative;
+}
+
+.calendar-day:not(.disabled):not(.other-month):hover {
+    background: rgba(212, 175, 55, 0.2);
+    transform: scale(1.1);
+    border-color: rgba(212, 175, 55, 0.5);
+}
+
+.calendar-day.selected {
+    background: var(--barber-gold);
+    color: var(--barber-dark);
+    font-weight: bold;
+    box-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
+}
+
+.calendar-day.today {
+    border-color: var(--barber-gold);
+}
+
+.calendar-day.disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+    color: #666;
+}
+
+.calendar-day.other-month {
+    opacity: 0.4;
+    color: #666;
+}
+
+.calendar-day.fully-booked::after {
+    content: '●';
+    position: absolute;
+    bottom: 2px;
+    font-size: 0.5rem;
+    color: #ef4444;
+}
+
+/* ==================== RELOJ ANALÓGICO ==================== */
+.clock-container {
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(30, 30, 30, 0.5);
+    border-radius: 1rem;
+    border: 1px solid rgba(212, 175, 55, 0.2);
+}
+
+.clock-svg {
+    width: 100%;
+    max-width: 350px;
+    height: auto;
+    cursor: pointer;
+    user-select: none;
+}
+
+.clock-face {
+    fill: rgba(20, 20, 20, 0.8);
+    stroke: var(--barber-gold);
+    stroke-width: 3;
+}
+
+.clock-center {
+    fill: var(--barber-gold);
+}
+
+.clock-number {
+    fill: var(--barber-gold);
+    font-size: 18px;
+    font-weight: bold;
+    text-anchor: middle;
+    dominant-baseline: middle;
+}
+
+.clock-tick {
+    stroke: rgba(212, 175, 55, 0.3);
+    stroke-width: 2;
+}
+
+.clock-tick.major {
+    stroke: rgba(212, 175, 55, 0.6);
+    stroke-width: 3;
+}
+
+.clock-hand {
+    stroke-linecap: round;
+    transition: transform 0.3s ease;
+    transform-origin: 200px 200px;
+}
+
+.clock-hand.hour {
+    stroke: var(--barber-gold);
+    stroke-width: 6;
+}
+
+.clock-hand.minute {
+    stroke: var(--barber-gold);
+    stroke-width: 4;
+}
+
+.clock-hand.dragging {
+    transition: none;
+}
+
+.clock-hour-marker {
+    fill: rgba(212, 175, 55, 0.2);
+    transition: fill 0.3s ease;
+}
+
+.clock-hour-marker.occupied {
+    fill: rgba(239, 68, 68, 0.3);
+    pointer-events: none;
+}
+
+.clock-hour-marker:hover:not(.occupied) {
+    fill: rgba(212, 175, 55, 0.4);
+}
+
+.selected-time-display {
+    margin-top: 1.5rem;
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--barber-gold);
+    text-align: center;
+    font-family: 'Courier New', monospace;
+}
+
+/* ==================== RESPONSIVE ==================== */
+@media (max-width: 768px) {
+
+    .calendar-container,
+    .clock-container {
+        padding: 1rem;
+    }
+
+    .calendar-day {
+        font-size: 0.875rem;
+    }
+
+    .calendar-weekday {
+        font-size: 0.75rem;
+    }
+
+    .clock-svg {
+        max-width: 280px;
+    }
+
+    .clock-number {
+        font-size: 14px;
+    }
+
+    .selected-time-display {
+        font-size: 1.5rem;
+    }
+}

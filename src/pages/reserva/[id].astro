@@ -1,0 +1,225 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+const { id } = Astro.params;
+---
+
+<Layout title="Estado de Reserva">
+  <div class="container mx-auto px-4 py-12">
+    <div class="max-w-2xl mx-auto">
+      <!-- Loading State -->
+      <div id="loading" class="text-center py-12">
+        <div class="loading loading-spinner loading-lg text-primary"></div>
+        <p class="mt-4 text-gray-400">Cargando reserva...</p>
+      </div>
+
+      <!-- Reservation Content -->
+      <div id="reserva-content" class="hidden">
+        <!-- Content will be loaded dynamically -->
+      </div>
+
+      <!-- Error State -->
+      <div id="error-state" class="hidden text-center py-12">
+        <div class="text-6xl mb-4">❌</div>
+        <h2 class="text-2xl font-bold mb-4">Reserva no encontrada</h2>
+        <p class="text-gray-400 mb-6">
+          No se pudo encontrar la reserva con el ID proporcionado.
+        </p>
+        <a href="/booking" class="btn btn-primary">Hacer una nueva reserva</a>
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<script define:vars={{ reservaId: id }}>
+  async function cargarReserva() {
+    try {
+      const response = await fetch(`/api/reserva/${reservaId}`);
+      const data = await response.json();
+
+      const loading = document.getElementById('loading');
+      const content = document.getElementById('reserva-content');
+      const errorState = document.getElementById('error-state');
+
+      loading?.classList.add('hidden');
+
+      if (data.success && data.reserva) {
+        const reserva = data.reserva;
+        
+        // Determinar color e icono según estado
+        const estadoInfo = {
+          'confirmada': { 
+            icon: '<svg class="w-16 h-16 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>',
+            color: 'success', 
+            text: 'Reserva Confirmada', 
+            bg: 'bg-green-500/10' 
+          },
+          'pendiente': { 
+            icon: '<svg class="w-16 h-16 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>',
+            color: 'info', 
+            text: 'Pendiente de Confirmación', 
+            bg: 'bg-blue-500/10' 
+          },
+          'completada': { 
+            icon: '<svg class="w-16 h-16 text-purple-500" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>',
+            color: 'primary', 
+            text: 'Servicio Completado', 
+            bg: 'bg-purple-500/10' 
+          },
+          'cancelada': { 
+            icon: '<svg class="w-16 h-16 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>',
+            color: 'error', 
+            text: 'Reserva Cancelada', 
+            bg: 'bg-red-500/10' 
+          }
+        };
+
+        const info = estadoInfo[reserva.estado] || estadoInfo['pendiente'];
+
+        // Renderizar contenido
+        content.innerHTML = `
+          <div class="card bg-base-200">
+            <div class="card-body">
+              <div class="text-center mb-6">
+                <div class="mb-4">${info.icon}</div>
+                <h1 class="text-3xl font-display font-bold text-gradient mb-2">
+                  ${info.text}
+                </h1>
+              </div>
+
+              <!-- Progress Steps -->
+              ${renderSteps(reserva.estado)}
+
+              <!-- Detalles de la reserva -->
+              <div class="${info.bg} p-6 rounded-lg mb-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <p class="text-sm text-gray-400">Fecha</p>
+                    <p class="text-lg font-semibold">${formatearFecha(reserva.fecha)}</p>
+                  </div>
+                  <div>
+                    <p class="text-sm text-gray-400">Hora</p>
+                    <p class="text-lg font-semibold">${reserva.hora}</p>
+                  </div>
+                  <div>
+                    <p class="text-sm text-gray-400">Servicio</p>
+                    <p class="text-lg font-semibold">${reserva.servicio}</p>
+                  </div>
+                  <div>
+                    <p class="text-sm text-gray-400">Cliente</p>
+                    <p class="text-lg font-semibold">${reserva.cliente.nombre}</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Motivo de cancelación (si aplica) -->
+              ${reserva.estado === 'cancelada' && reserva.motivoCancelacion ? `
+                <div class="alert alert-error mb-6">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <div>
+                    <h4 class="font-bold">Reserva cancelada por el administrador</h4>
+                    <p class="text-sm mt-1"><strong>Motivo:</strong> ${reserva.motivoCancelacion}</p>
+                    ${reserva.fechaCancelacion ? `<p class="text-xs opacity-70 mt-1">Cancelada el: ${formatearFecha(reserva.fechaCancelacion.split('T')[0])}</p>` : ''}
+                  </div>
+                </div>
+              ` : ''}
+
+              <!-- ID de reserva -->
+              <div class="text-center text-sm text-gray-500 mb-4">
+                <p>ID de reserva: <code class="bg-base-300 px-2 py-1 rounded">${reserva.id}</code></p>
+              </div>
+
+              <!-- Botón de cancelación (si no está cancelada ni completada) -->
+              ${reserva.estado !== 'cancelada' && reserva.estado !== 'completada' ? `
+                <div class="text-center">
+                  <p class="text-sm text-gray-400 mb-3">¿Necesitas cancelar?</p>
+                  <a href="/cancelar/${reserva.cancelToken || reserva.id}" class="btn btn-outline btn-error">
+                    Cancelar mi Reserva
+                  </a>
+                </div>
+              ` : ''}
+
+              <!-- Botón para hacer otra reserva -->
+              <div class="text-center mt-6">
+                <a href="/booking" class="btn btn-primary">
+                  Hacer otra reserva
+                </a>
+              </div>
+            </div>
+          </div>
+        `;
+
+        content?.classList.remove('hidden');
+      } else {
+        errorState?.classList.remove('hidden');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      const loading = document.getElementById('loading');
+      const errorState = document.getElementById('error-state');
+      loading?.classList.add('hidden');
+      errorState?.classList.remove('hidden');
+    }
+  }
+
+  function renderSteps(estado) {
+    // Si está cancelada, mostrar solo cancelado
+    if (estado === 'cancelada') {
+      return `
+        <ul class="steps w-full mb-6 steps-vertical lg:steps-horizontal">
+          <li class="step step-error">Reserva Cancelada</li>
+        </ul>
+      `;
+    }
+    
+    // Determinar cuántos pasos están completos
+    let pasosCompletos = 0;
+    switch(estado) {
+      case 'pendiente':
+        pasosCompletos = 2; // Reserva + Pendiente de confirmación
+        break;
+      case 'confirmada':
+        pasosCompletos = 3; // Reserva + Pendiente + Confirmada
+        break;
+      case 'completada':
+        pasosCompletos = 4; // Todos
+        break;
+    }
+    
+    return `
+      <ul class="steps w-full mb-6 steps-vertical lg:steps-horizontal">
+        <li class="step ${pasosCompletos >= 1 ? 'step-primary' : ''}">Reserva</li>
+        <li class="step ${pasosCompletos >= 2 ? 'step-primary' : ''}">Pendiente de Confirmación</li>
+        <li class="step ${pasosCompletos >= 3 ? 'step-primary' : ''}">Confirmada</li>
+        <li class="step ${pasosCompletos >= 4 ? 'step-primary' : ''}">Servicio Completado</li>
+      </ul>
+    `;
+  }
+
+  function formatearFecha(fecha) {
+    const [year, month, day] = fecha.split('-');
+    const meses = [
+      'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+      'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+    ];
+    return `${day} de ${meses[parseInt(month) - 1]} de ${year}`;
+  }
+
+  // Cargar reserva al iniciar
+  cargarReserva();
+
+  // Auto-refresh cada 30 segundos para actualizar el estado
+  setInterval(() => {
+    console.log('Actualizando estado de la reserva...');
+    cargarReserva();
+  }, 30000);
+</script>
+
+<style>
+  code {
+    font-family: 'Courier New', monospace;
+    font-size: 0.875rem;
+  }
+</style>

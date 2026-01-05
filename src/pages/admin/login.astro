@@ -1,0 +1,180 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+// Verificar si ya está autenticado
+const cookieHeader = Astro.request.headers.get('cookie');
+const cookies = cookieHeader?.split(';').reduce((acc, cookie) => {
+  const [key, value] = cookie.trim().split('=');
+  acc[key] = value;
+  return acc;
+}, {} as Record<string, string>) || {};
+
+// Si ya tiene sesión válida, redirigir al panel
+if (cookies['admin_session']) {
+  return Astro.redirect('/admin');
+}
+---
+
+<Layout title="Admin Login">
+  <div class="min-h-screen flex items-center justify-center px-4 py-12">
+    <div class="card max-w-md w-full">
+      <div class="card-body">
+        <!-- Logo/Header -->
+        <div class="text-center mb-8">
+          <svg class="w-20 h-20 mx-auto mb-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.121 14.121L19 19m-7-7l7-7m-7 7l-2.879 2.879M12 12L9.121 9.121m0 0L4 4m5.121 5.121L4 14"/>
+          </svg>
+          <h1 class="text-3xl font-display font-bold text-gradient mb-2">
+            Panel de Administración
+          </h1>
+          <p class="text-gray-400">Ingresa tu contraseña para continuar</p>
+        </div>
+
+        <!-- Formulario de Login -->
+        <form id="login-form" class="space-y-6">
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text">Contraseña</span>
+            </label>
+            <div class="relative">
+              <input
+                type="password"
+                id="password"
+                name="password"
+                class="input pr-12"
+                placeholder="Ingresa tu contraseña"
+                required
+                autocomplete="current-password"
+              />
+              <button
+                type="button"
+                id="toggle-password"
+                class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-primary transition-colors"
+                aria-label="Mostrar contraseña"
+              >
+                <span id="eye-icon">👁️</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Mensaje de error/éxito -->
+          <div id="message" class="hidden alert">
+            <span id="message-text"></span>
+          </div>
+
+          <!-- Botón de submit -->
+          <button type="submit" id="submit-btn" class="btn btn-primary w-full">
+            <span id="btn-text">Iniciar Sesión</span>
+            <span id="btn-loading" class="loading loading-spinner hidden"></span>
+          </button>
+        </form>
+
+        <!-- Link para volver -->
+        <div class="text-center mt-6">
+          <a href="/" class="text-sm text-gray-400 hover:text-primary transition-colors">
+            ← Volver al inicio
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<script>
+  const form = document.getElementById('login-form') as HTMLFormElement;
+  const passwordInput = document.getElementById('password') as HTMLInputElement;
+  const submitBtn = document.getElementById('submit-btn') as HTMLButtonElement;
+  const btnText = document.getElementById('btn-text') as HTMLSpanElement;
+  const btnLoading = document.getElementById('btn-loading') as HTMLSpanElement;
+  const messageDiv = document.getElementById('message') as HTMLDivElement;
+  const messageText = document.getElementById('message-text') as HTMLSpanElement;
+  const togglePasswordBtn = document.getElementById('toggle-password') as HTMLButtonElement;
+  const eyeIcon = document.getElementById('eye-icon') as HTMLSpanElement;
+
+  // Toggle password visibility
+  togglePasswordBtn.addEventListener('click', () => {
+    const isPassword = passwordInput.type === 'password';
+    passwordInput.type = isPassword ? 'text' : 'password';
+    eyeIcon.textContent = isPassword ? '🙈' : '👁';
+  });
+
+  function showMessage(message: string, type: 'error' | 'success') {
+    messageText.textContent = message;
+    messageDiv.classList.remove('hidden', 'alert-error', 'alert-success');
+    messageDiv.classList.add(type === 'error' ? 'alert-error' : 'alert-success');
+  }
+
+  function hideMessage() {
+    messageDiv.classList.add('hidden');
+  }
+
+  function setLoading(loading: boolean) {
+    if (loading) {
+      submitBtn.disabled = true;
+      btnText.classList.add('hidden');
+      btnLoading.classList.remove('hidden');
+    } else {
+      submitBtn.disabled = false;
+      btnText.classList.remove('hidden');
+      btnLoading.classList.add('hidden');
+    }
+  }
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    hideMessage();
+    setLoading(true);
+
+    const password = passwordInput.value;
+
+    try {
+      const response = await fetch('/api/admin/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ password }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        // Mostrar mensaje de éxito en verde
+        showMessage('✓ Contraseña correcta. Redirigiendo...', 'success');
+        // Esperar un momento antes de redirigir para que vean el mensaje verde
+        setTimeout(() => {
+          window.location.href = '/admin';
+        }, 800);
+      } else {
+        showMessage(data.error || 'Error al iniciar sesión', 'error');
+        setLoading(false);
+        passwordInput.value = '';
+        passwordInput.focus();
+      }
+    } catch (error) {
+      console.error('Error en login:', error);
+      showMessage('Error de conexión. Intenta nuevamente.', 'error');
+      setLoading(false);
+    }
+  });
+</script>
+
+<style>
+  .alert {
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+  }
+
+  .alert-error {
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    color: #fca5a5;
+  }
+
+  .alert-success {
+    background: rgba(34, 197, 94, 0.1);
+    border: 1px solid rgba(34, 197, 94, 0.3);
+    color: #86efac;
+  }
+</style>

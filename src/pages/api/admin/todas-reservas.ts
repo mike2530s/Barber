@@ -4,8 +4,23 @@
 import type { APIRoute } from 'astro';
 import { db } from '../../../firebase/client';
 import { collection, query, where, getDocs, orderBy } from 'firebase/firestore';
+import { validateSessionFromCookies } from '../../../utils/auth';
 
-export const GET: APIRoute = async () => {
+export const GET: APIRoute = async ({ request }) => {
+    // Verificar autenticación
+    const cookieHeader = request.headers.get('cookie');
+    const isAuthenticated = await validateSessionFromCookies(cookieHeader);
+
+    if (!isAuthenticated) {
+        return new Response(JSON.stringify({
+            success: false,
+            error: 'No autorizado'
+        }), {
+            status: 401,
+            headers: { 'Content-Type': 'application/json' }
+        });
+    }
+
     try {
         // Obtener fecha de hace 30 días
         const hace30Dias = new Date();
