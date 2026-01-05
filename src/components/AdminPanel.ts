@@ -29,8 +29,10 @@ export function initAdminPanel() {
                     await marcarCompletada(reservaId);
                 } else if (button.classList.contains('btn-cancelar')) {
                     mostrarModalCancelar(reservaId);
-                } else if (button.classList.contains('btn-detalles')) {
+                } else if (button.classList.contains('btn-ver-detalles')) {
                     verDetalles(reservaId);
+                } else if (button.classList.contains('btn-eliminar')) {
+                    await eliminarReserva(reservaId);
                 }
             });
             console.log('Event delegation configurado en tbody');
@@ -169,6 +171,17 @@ export function initAdminPanel() {
               data-reserva-id="${reserva.id}"
             >
               Ver detalles
+            </button>
+
+            <!-- Botón Eliminar (siempre visible para limpieza) -->
+            <button 
+              class="btn btn-sm btn-ghost btn-eliminar text-error hover:bg-error/10"
+              data-reserva-id="${reserva.id}"
+              title="Eliminar permanentemente"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              </svg>
             </button>
           </div>
         </td>
@@ -445,4 +458,34 @@ export function initAdminPanel() {
             alert('❌ Error al cancelar la reserva');
         }
     });
+
+    async function eliminarReserva(id: string) {
+        if (!confirm('⚠️ ¿Estás seguro de que quieres ELIMINAR permanentemente esta reserva?\n\nEsta acción no se puede deshacer.')) {
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/admin/eliminar-reserva?id=${id}`, {
+                method: 'DELETE'
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                // Mostrar notificación visual
+                const toast = document.createElement('div');
+                toast.className = 'fixed bottom-4 right-4 bg-red-600 text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-bounce';
+                toast.innerText = '🗑️ Reserva eliminada';
+                document.body.appendChild(toast);
+                setTimeout(() => toast.remove(), 3000);
+
+                await cargarReservas();
+            } else {
+                alert('❌ Error: ' + (data.error || 'No se pudo eliminar'));
+            }
+        } catch (error) {
+            console.error('Error al eliminar:', error);
+            alert('❌ Error de conexión al eliminar');
+        }
+    }
 }

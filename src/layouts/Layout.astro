@@ -93,5 +93,42 @@ const {
         </div>
       </div>
     </footer>
+    <!-- Botón flotante de Mi Reserva (se muestra si hay reserva activa) -->
+    <a id="mi-reserva-btn" href="#" class="fixed bottom-6 right-6 btn btn-primary shadow-lg z-40 hidden animate-slide-up gap-2">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+      </svg>
+      Mi Reserva
+    </a>
+
+    <script>
+      // Verificar si hay reserva activa al cargar
+      document.addEventListener('DOMContentLoaded', () => {
+        const reservaData = localStorage.getItem('barber_reserva_activa');
+        if (reservaData) {
+          try {
+            const { id, timestamp } = JSON.parse(reservaData);
+            const now = Date.now();
+            const horas48 = 48 * 60 * 60 * 1000;
+
+            // Si tiene menos de 48 horas, mostrar botón
+            if (now - timestamp < horas48) {
+              const btn = document.getElementById('mi-reserva-btn');
+              if (btn) {
+                btn.href = `/reserva/${id}`;
+                btn.classList.remove('hidden');
+                btn.classList.add('flex');
+              }
+            } else {
+              // Si expiró, limpiar
+              localStorage.removeItem('barber_reserva_activa');
+            }
+          } catch (e) {
+            console.error('Error al leer reserva local', e);
+          }
+        }
+      });
+    </script>
   </body>
 </html>

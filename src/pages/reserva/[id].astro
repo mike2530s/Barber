@@ -210,6 +210,17 @@ const { id } = Astro.params;
   // Cargar reserva al iniciar
   cargarReserva();
 
+  // Guardar/Actualizar en localStorage al visitar
+  try {
+    const reservaData = {
+      id: id,
+      timestamp: Date.now()
+    };
+    localStorage.setItem('barber_reserva_activa', JSON.stringify(reservaData));
+  } catch (e) {
+    console.error('Error al guardar en local', e);
+  }
+
   // Auto-refresh cada 30 segundos para actualizar el estado
   setInterval(() => {
     console.log('Actualizando estado de la reserva...');

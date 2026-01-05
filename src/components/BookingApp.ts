@@ -509,6 +509,9 @@ export function createApp(container: HTMLElement) {
   }
 
   function mostrarExito(reservaId: string, cancelUrl?: string) {
+    // Guardar en localStorage
+    guardarReservaLocal(reservaId);
+
     container.innerHTML = `
       <div class="text-center py-12 fade-in">
         <svg class="w-24 h-24 mx-auto mb-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -584,6 +587,15 @@ export function createApp(container: HTMLElement) {
         </button>
       </div>
     `;
+  }
+
+  // Función para guardar reserva en localStorage
+  function guardarReservaLocal(id: string) {
+    const reservaData = {
+      id: id,
+      timestamp: Date.now()
+    };
+    localStorage.setItem('barber_reserva_activa', JSON.stringify(reservaData));
   }
 
   // Utilidades
