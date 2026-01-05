@@ -1,5 +1,6 @@
 // Componente de administración - Gestión de reservas
 // Maneja la lógica del panel de admin
+import { icon } from '../utils/icons';
 
 export function initAdminPanel() {
     let todasLasReservas: any[] = [];
@@ -141,7 +142,7 @@ export function initAdminPanel() {
                 class="btn btn-sm btn-success btn-confirmar"
                 data-reserva-id="${reserva.id}"
               >
-                <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                ${icon('check-circle', 'w-4 h-4 inline mr-1')}
                 Confirmar
               </button>
             ` : ''}
@@ -151,7 +152,7 @@ export function initAdminPanel() {
                 class="btn btn-sm btn-primary btn-completar"
                 data-reserva-id="${reserva.id}"
               >
-                <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                ${icon('check', 'w-4 h-4 inline mr-1')}
                 Completar
               </button>
             ` : ''}
@@ -161,13 +162,13 @@ export function initAdminPanel() {
                 class="btn btn-sm btn-error btn-cancelar"
                 data-reserva-id="${reserva.id}"
               >
-                <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                ${icon('close-circle', 'w-4 h-4 inline mr-1 text-white')}
                 Cancelar
               </button>
             ` : ''}
             
             <button 
-              class="btn btn-sm btn-outline btn-detalles"
+              class="btn btn-sm btn-outline btn-ver-detalles"
               data-reserva-id="${reserva.id}"
             >
               Ver detalles

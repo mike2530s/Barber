@@ -2,6 +2,7 @@
 // Panel de administración - Vista de todas las reservas
 import Layout from '../../layouts/Layout.astro';
 import { validateSessionFromCookies } from '../../utils/auth';
+import { Icon } from 'astro-icon/components';
 
 // Verificar autenticación
 const cookieHeader = Astro.request.headers.get('cookie');
@@ -21,11 +22,11 @@ if (!isAuthenticated) {
         <p class="text-gray-400 mt-2">Gestiona todas las reservas de la barbería</p>
       </div>
       <div class="flex gap-3">
-        <button id="logout-btn" class="btn btn-outline">
-          🚪 Cerrar Sesión
+        <button id="logout-btn" class="btn btn-outline gap-2">
+          <Icon name="mdi:logout" class="w-5 h-5" /> Cerrar Sesión
         </button>
-        <a href="/" class="btn btn-outline">
-          ← Volver al inicio
+        <a href="/" class="btn btn-outline gap-2">
+          <Icon name="mdi:arrow-left" class="w-5 h-5" /> Volver al inicio
         </a>
       </div>
     </div>
@@ -59,8 +60,8 @@ if (!isAuthenticated) {
             </select>
           </div>
         </div>
-        <button id="btn-filtrar" class="btn btn-primary mt-4">
-          Filtrar Reservas
+        <button id="btn-filtrar" class="btn btn-primary mt-4 gap-2">
+          <Icon name="mdi:filter-variant" class="w-5 h-5" /> Filtrar Reservas
         </button>
       </div>
     </div>
@@ -69,26 +70,54 @@ if (!isAuthenticated) {
     <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
       <div class="card bg-primary/10 border-primary/30">
         <div class="card-body">
-          <div class="text-xs text-gray-400">Total Reservas</div>
-          <div class="text-3xl font-bold text-primary" id="stat-total">0</div>
+          <div class="flex items-center justify-between">
+            <div>
+              <div class="text-xs text-gray-400">Total Reservas</div>
+              <div class="text-3xl font-bold text-primary" id="stat-total">0</div>
+            </div>
+            <div class="p-3 bg-primary/20 rounded-full">
+              <Icon name="mdi:calendar-month" class="w-8 h-8 text-primary" />
+            </div>
+          </div>
         </div>
       </div>
       <div class="card bg-blue-500/10 border-blue-500/30">
         <div class="card-body">
-          <div class="text-xs text-gray-400">Pendientes</div>
-          <div class="text-3xl font-bold text-blue-400" id="stat-pendientes">0</div>
+          <div class="flex items-center justify-between">
+             <div>
+              <div class="text-xs text-gray-400">Pendientes</div>
+              <div class="text-3xl font-bold text-blue-400" id="stat-pendientes">0</div>
+            </div>
+            <div class="p-3 bg-blue-500/20 rounded-full">
+              <Icon name="mdi:clock-time-four-outline" class="w-8 h-8 text-blue-400" />
+            </div>
+          </div>
         </div>
       </div>
       <div class="card bg-green-500/10 border-green-500/30">
         <div class="card-body">
-          <div class="text-xs text-gray-400">Confirmadas</div>
-          <div class="text-3xl font-bold text-green-400" id="stat-confirmadas">0</div>
+          <div class="flex items-center justify-between">
+            <div>
+              <div class="text-xs text-gray-400">Confirmadas</div>
+              <div class="text-3xl font-bold text-green-400" id="stat-confirmadas">0</div>
+            </div>
+            <div class="p-3 bg-green-500/20 rounded-full">
+              <Icon name="mdi:check-circle-outline" class="w-8 h-8 text-green-400" />
+            </div>
+          </div>
         </div>
       </div>
       <div class="card bg-purple-500/10 border-purple-500/30">
-        <div class="card-body">
-          <div class="text-xs text-gray-400">Completadas</div>
-          <div class="text-3xl font-bold text-purple-400" id="stat-completadas">0</div>
+         <div class="card-body">
+          <div class="flex items-center justify-between">
+            <div>
+              <div class="text-xs text-gray-400">Completadas</div>
+              <div class="text-3xl font-bold text-purple-400" id="stat-completadas">0</div>
+            </div>
+            <div class="p-3 bg-purple-500/20 rounded-full">
+              <Icon name="mdi:star-outline" class="w-8 h-8 text-purple-400" />
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -97,7 +126,7 @@ if (!isAuthenticated) {
     <div class="card">
       <div class="card-body">
         <div id="loading" class="text-center py-8">
-          <div class="loading loading-spinner loading-lg"></div>
+          <div class="loading loading-spinner loading-lg text-primary"></div>
           <p class="mt-4 text-gray-400">Cargando reservas...</p>
         </div>
         
@@ -123,9 +152,7 @@ if (!isAuthenticated) {
         </div>
 
         <div id="no-reservas" class="hidden text-center py-12">
-          <svg class="w-20 h-20 mx-auto mb-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-          </svg>
+          <Icon name="mdi:calendar-remove" class="w-20 h-20 mx-auto mb-4 text-gray-500" />
           <p class="text-xl text-gray-400">No hay reservas para mostrar</p>
         </div>
       </div>
@@ -168,9 +195,9 @@ if (!isAuthenticated) {
         </button>
         <button 
           id="confirm-cancel-btn"
-          class="btn btn-error"
+          class="btn btn-error gap-2"
         >
-          ❌ Confirmar Cancelación
+          <Icon name="mdi:alert-circle-outline" class="w-5 h-5" /> Confirmar Cancelación
         </button>
       </div>
     </div>
